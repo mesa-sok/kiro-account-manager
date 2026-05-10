@@ -23,6 +23,7 @@ src-tauri/target/
 .tauri-updater-key.pub
 .tauri-updater-password
 .tauri-updater-password.pub
+.tauri/
 
 # Logs
 *.log
