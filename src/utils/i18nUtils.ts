@@ -1,7 +1,18 @@
-// i18n 工具函数（仅支持中文）
 import i18n from 'i18next'
 
-// 切换语言（保留接口兼容性）
-export const changeLanguage = async (lng) => {
-  await i18n.changeLanguage(lng || 'zh-CN')
+export const SUPPORTED_LANGUAGES = ['zh-CN', 'en']
+
+export const normalizeLanguage = (languageCode) => {
+  if (!languageCode) return null
+  if (SUPPORTED_LANGUAGES.includes(languageCode)) return languageCode
+  if (languageCode.toLowerCase().startsWith('zh')) return 'zh-CN'
+  if (languageCode.toLowerCase().startsWith('en')) return 'en'
+  return null
+}
+
+export const changeLanguage = async (languageCode) => {
+  const normalizedLanguage = normalizeLanguage(languageCode) || 'zh-CN'
+  if (!SUPPORTED_LANGUAGES.includes(normalizedLanguage)) return
+  localStorage.setItem('language', normalizedLanguage)
+  await i18n.changeLanguage(normalizedLanguage)
 }

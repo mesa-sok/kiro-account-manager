@@ -72,9 +72,9 @@ fn handle_tray_icon_event<R: Runtime>(tray: &TrayIcon<R>, event: TrayIconEvent) 
 }
 
 pub fn create_tray_icon<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
-    let show_item = MenuItem::with_id(app, TRAY_SHOW_ID, "显示窗口", true, None::<&str>)?;
+    let show_item = MenuItem::with_id(app, TRAY_SHOW_ID, "Show Window", true, None::<&str>)?;
     let separator = PredefinedMenuItem::separator(app)?;
-    let exit_item = MenuItem::with_id(app, TRAY_EXIT_ID, "退出应用", true, None::<&str>)?;
+    let exit_item = MenuItem::with_id(app, TRAY_EXIT_ID, "Quit", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&show_item, &separator, &exit_item])?;
 
     let mut builder = TrayIconBuilder::with_id(TRAY_ICON_ID)
