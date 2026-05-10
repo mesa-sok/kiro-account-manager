@@ -33,4 +33,3 @@ export function tRustError(message: string, t: (key: string) => string) {
 
   return message
 }
-
