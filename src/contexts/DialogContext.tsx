@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react'
 import ConfirmModal from '../components/features/AccountManager/ConfirmModal'
 import UpdateDialog from '../components/shared/UpdateDialog'
+import i18n from '../i18n'
+import { tRustError } from '../utils/errorTranslations'
 
 const DialogContext = createContext(null)
 
@@ -40,12 +42,15 @@ export function DialogProvider({ children }) {
 
   // 显示错误弹窗
   const showError = useCallback((title, message) => {
+    const translatedMessage = typeof message === 'string'
+      ? tRustError(message, (key) => i18n.t(key))
+      : message
     return new Promise((resolve) => {
       setResolveRef(() => resolve)
       setDialog({
         type: 'error',
         title,
-        message})
+        message: translatedMessage})
     })
   }, [])
 

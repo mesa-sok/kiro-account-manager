@@ -15,14 +15,16 @@ import SettingsGeneral from './SettingsGeneral'
 import SettingsKiro from './SettingsKiro'
 import SettingsAgent from './SettingsAgent'
 import SettingsNotifications from './SettingsNotifications'
+import { changeLanguage, normalizeLanguage } from '../../../utils/i18nUtils'
 import React from 'react'
 
 function Settings() {
-    const { t, theme, setTheme } = useApp()
+    const { t, i18n, theme, setTheme } = useApp()
     const { showConfirm, showError, showSuccess } = useDialog()
     const { updateSettings: updateAppSettings } = useAppSettings()
     const { privacyMode, setPrivacyMode } = usePrivacy()
     const [activeTab, setActiveTab] = useState('general')
+    const [language, setLanguage] = useState(() => normalizeLanguage(i18n.language) || 'zh-CN')
 
     const [aiModel, setAiModel] = useState('claude-sonnet-4.5')
     const [lockModel, setLockModel] = useState(false)
@@ -153,6 +155,13 @@ function Settings() {
         loadSettings()
     }, [loadSettings])
 
+    useEffect(() => {
+        const syncLanguage = () => setLanguage(normalizeLanguage(i18n.language) || 'zh-CN')
+        syncLanguage()
+        i18n.on('languageChanged', syncLanguage)
+        return () => i18n.off('languageChanged', syncLanguage)
+    }, [i18n])
+
     const saveAppSettings = (updates: any, notifyChange = false) => persistAppSettings({
         updates,
         notifyChange,
@@ -246,6 +255,13 @@ function Settings() {
         const interval = parseInt(value) || 5
         setAutoSwitchInterval(interval)
         await saveAppSettings({ autoSwitchInterval: interval }, true)
+    }
+
+    const handleLanguageChange = async (value: string) => {
+        const nextLanguage = normalizeLanguage(value)
+        if (!nextLanguage || nextLanguage === language) return
+        await changeLanguage(nextLanguage)
+        setLanguage(nextLanguage)
     }
 
     const handleBrowseKiroPath = async () => {
@@ -479,6 +495,7 @@ function Settings() {
 
                     <TabsContent value="general">
                         <SettingsGeneral
+                            language={language}
                             autoRefresh={autoRefresh}
                             autoRefreshInterval={autoRefreshInterval}
                             autoChangeMachineId={autoChangeMachineId}
@@ -510,6 +527,7 @@ function Settings() {
                             handleAutoSwitchEnabledChange={handleAutoSwitchEnabledChange}
                             handleAutoSwitchThresholdChange={handleAutoSwitchThresholdChange}
                             handleAutoSwitchIntervalChange={handleAutoSwitchIntervalChange}
+                            handleLanguageChange={handleLanguageChange}
                             appDataDir={appDataDir}
                             handleOpenAppDataDir={handleOpenAppDataDir}
                             t={t}

@@ -20,6 +20,7 @@ interface SystemMachineInfo {
 }
 
 interface SettingsGeneralProps {
+  language: string;
   autoRefresh: boolean;
   autoRefreshInterval: number;
   autoChangeMachineId: boolean;
@@ -53,10 +54,12 @@ interface SettingsGeneralProps {
   handleAutoSwitchEnabledChange: (checked: boolean) => void;
   handleAutoSwitchThresholdChange: (value: number) => void;
   handleAutoSwitchIntervalChange: (value: string) => void;
+  handleLanguageChange: (value: string) => void;
   t: TFunction;
 }
 
 function SettingsGeneral({
+  language,
   autoRefresh,
   autoRefreshInterval,
   autoChangeMachineId,
@@ -90,6 +93,7 @@ function SettingsGeneral({
   handleAutoSwitchEnabledChange,
   handleAutoSwitchThresholdChange,
   handleAutoSwitchIntervalChange,
+  handleLanguageChange,
   t
 }: SettingsGeneralProps) {
   const accountToggleContainerClass = "bg-card hover:bg-muted/50 border border-border text-foreground"
@@ -230,6 +234,28 @@ function SettingsGeneral({
         </CardContent>
       </Card>
 
+      {/* 语言 */}
+      <Card className="card-glow animate-slide-in-left delay-210">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1 h-5 bg-primary rounded-full"></div>
+            <Globe size={18} className="text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">{t('settings.language')}</h2>
+          </div>
+          <p className="text-sm text-muted-foreground mb-5">{t('settings.languageDesc')}</p>
+
+          <Select value={language} onValueChange={handleLanguageChange}>
+            <SelectTrigger className="text-foreground bg-background border-border focus:ring-primary/20">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              <SelectItem value="zh-CN" className="text-foreground">{t('settings.languageChinese')}</SelectItem>
+              <SelectItem value="en" className="text-foreground">{t('settings.languageEnglish')}</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
       {/* 应用数据目录 */}
       <Card className="card-glow animate-slide-in-left delay-225">
         <CardContent className="p-6">
@@ -247,7 +273,7 @@ function SettingsGeneral({
                   {appDataDir || t('common.loading')}
                 </code>
                 {appDataDir && (
-                  <button onClick={() => copyToClipboard(appDataDir, 'appDataDir')} className="p-2 rounded-lg hover:bg-muted/50 transition-colors flex-shrink-0" title="复制路径">
+                  <button onClick={() => copyToClipboard(appDataDir, 'appDataDir')} className="p-2 rounded-lg hover:bg-muted/50 transition-colors flex-shrink-0" title={t('common.copy')}>
                     {copiedField === 'appDataDir' ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-muted-foreground" />}
                   </button>
                 )}
@@ -411,7 +437,7 @@ function SettingsGeneral({
                   {systemMachineInfo?.machineGuid || t('common.loading')}
                 </code>
                 {systemMachineInfo?.machineGuid && (
-                  <button onClick={() => copyToClipboard(systemMachineInfo.machineGuid, 'sysMachineGuid')} className="p-2 rounded-lg hover:bg-muted/50 transition-colors flex-shrink-0" title="复制">
+                  <button onClick={() => copyToClipboard(systemMachineInfo.machineGuid, 'sysMachineGuid')} className="p-2 rounded-lg hover:bg-muted/50 transition-colors flex-shrink-0" title={t('common.copy')}>
                     {copiedField === 'sysMachineGuid' ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-muted-foreground" />}
                   </button>
                 )}
